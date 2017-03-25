@@ -1,10 +1,12 @@
 package com.example.icol.navast;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,6 +14,7 @@ import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,9 +40,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -51,11 +58,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     LatLng current,dest;
     int complete,minakhir,min,mapclickflag=0;
     LinearLayout topbar;
-    RelativeLayout appbar;
-    ImageButton pick;
+    RelativeLayout appbar,bot_bar;
+    ImageButton pick,set_cur;
+    Button navigate;
     Marker mark;
     BitmapDescriptor markers;
-    TextView cek;
+    TextView cek,jarak,kadar;
     final LatLng GOJEK = new LatLng(-6.27314, 106.81657);
     ArrayList<Double> nodelatitude;
     ArrayList<Double> nodelongitude;
@@ -69,7 +77,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         pick = (ImageButton) findViewById(R.id.pick);
         markers = BitmapDescriptorFactory.fromResource(R.drawable.marker);
         cek = (TextView) findViewById(R.id.cek);
-
+        bot_bar= (RelativeLayout) findViewById(R.id.bot_bar);
+        kadar = (TextView) findViewById(R.id.kadar);
+        jarak = (TextView) findViewById(R.id.jarak);
+        set_cur = (ImageButton)findViewById(R.id.set_cur);
+        navigate= (Button) findViewById(R.id.navigate);
 
     }
     @Override
@@ -80,11 +92,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        inisialisasi();
+        navigate.setVisibility(View.GONE);
+        kadar.setVisibility(View.GONE);
+        jarak.setVisibility(View.GONE);
+        bot_bar.setVisibility(View.GONE);
         nodename = (ArrayList<String>) getIntent().getSerializableExtra("noname");
         nodelatitude = (ArrayList<Double>) getIntent().getSerializableExtra("nolat");
         nodelongitude = (ArrayList<Double>) getIntent().getSerializableExtra("nolong");
         nodeid = (ArrayList<Integer>) getIntent().getSerializableExtra("noid");
+
     }
 
 
@@ -100,14 +117,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        inisialisasi();
         complete=0;
-        //buildGoogleApiClient();
-        //mGoogleApiClient.connect();
-        // inf.setVisibility(View.GONE);
-        // strt.setVisibility(View.GONE);
-        // text_tujuan.setVisibility(View.GONE);
-        // but_tujuan.setVisibility(View.GONE);
         CameraUpdate cameraPosition = CameraUpdateFactory.newLatLngZoom(GOJEK, 13);
         mMap.moveCamera(cameraPosition);
         mMap.animateCamera(cameraPosition);
@@ -122,6 +132,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        // Spinner on item click listener
 //
 
+    }
+    public void set_cur(View view){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(100), 2000, null);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder(mMap.getCameraPosition())
+                .zoom(13)
+                .bearing(0)
+                .tilt(0)
+                .build()));
     }
     private void markeroption(LatLng koor, BitmapDescriptor marker,String nama){
         markerOptions= new MarkerOptions().position(koor)
@@ -170,6 +202,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(LatLng point) {
                 if(nodelatitude != null){
+                    bot_bar.setVisibility(View.VISIBLE);
+                    navigate.setVisibility(View.VISIBLE);
+                    kadar.setVisibility(View.VISIBLE);
+                    jarak.setVisibility(View.VISIBLE);
                     latklik = point.latitude;
                     longklik = point.longitude;
                     minakhir = coor_closer(latklik,longklik);

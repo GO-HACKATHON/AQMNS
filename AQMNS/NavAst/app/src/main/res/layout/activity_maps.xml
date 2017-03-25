@@ -71,13 +71,13 @@
                 android:id="@+id/middle_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
                 android:background="@color/Background2"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingBottom="7dp"
-                android:paddingTop="7dp">
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/pick_text"
@@ -102,9 +102,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true">
+                android:layout_alignParentEnd="true"
+                android:background="@color/textHeader">
+
+                <TextView
+                    android:id="@+id/kadar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0ppm"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
+
+                <Button
+                    android:id="@+id/navigate"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="80dp"
+                    android:layout_marginRight="80dp"
+                    android:background="@color/Background2"
+                    android:text="Navigate"
+                    android:textColor="@color/textHeader" />
+
+                <TextView
+                    android:id="@+id/jarak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:text="0Km"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
 
             </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/set_cur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/set_curr"
+                android:onClick="set_cur"
+                app:srcCompat="@mipmap/set_curr"
+                android:layout_marginBottom="11dp"
+                android:layout_marginStart="16dp"
+                android:layout_above="@+id/bot_bar"
+                android:layout_alignParentStart="true" />
         </RelativeLayout>
     </RelativeLayout>
 
