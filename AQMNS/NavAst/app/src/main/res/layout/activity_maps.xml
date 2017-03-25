@@ -17,73 +17,76 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/Background"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:id="@+id/linearLayout">
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp">
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/logo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:gravity="center"
-                app:srcCompat="@drawable/ic_action_name" />
+                app:srcCompat="@drawable/logo" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:textStyle="bold" />
+                android:textColor="@color/textHeader"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/logo" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/linearLayout"
+            android:layout_below="@+id/app_bar"
             android:layout_marginTop="40dp"
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_below="@+id/linearLayout2"
+                android:id="@+id/pick"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/middle_bar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@mipmap/pick"
-                />
+                android:onClick="pick_button" />
 
             <LinearLayout
-                android:id="@+id/linearLayout2"
+                android:id="@+id/middle_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/Background2"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingBottom="12dp"
-                android:paddingTop="10dp">
+                android:paddingBottom="7dp"
+                android:paddingTop="7dp">
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/pick_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Pick Your Destination"
-                    android:textColor="@color/Background"
-                    android:textSize="18sp"
-                    android:textStyle="italic" />
+                    android:textColor="@color/textHeader"
+                    android:textSize="15sp" />
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
