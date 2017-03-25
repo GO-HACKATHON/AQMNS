@@ -32,7 +32,7 @@ from database, we use haversine method.
 		  return -1; // return value
 		  }
 	  $minVal=$dist[0]; // start from array 0
-	  $minIdx=0; start from index 0
+	  $minIdx=0; //start from index 0
 	  for($idx=1;$idx<count($dist);$idx++){ //looping for check the closest distance
 		  if($dist[$idx]<$minVal){ //check the closest distance
 			  $minVal=$dist[$idx]; //switch minval
