@@ -34,6 +34,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -47,6 +49,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     RelativeLayout middle_bar;
     ImageButton pick;
     final LatLng GOJEK = new LatLng(-6.27314, 106.81657);
+    ArrayList<Double> nodelatitude;
+    ArrayList<Double> nodelongitude;
+    ArrayList<Integer> nodeid;
+    ArrayList<String> nodename;
     private void inisialisasi() {
 
         appbar = (RelativeLayout) findViewById(R.id.app_bar);
@@ -63,6 +69,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        nodename = (ArrayList<String>) getIntent().getSerializableExtra("noname");
+        nodelatitude = (ArrayList<Double>) getIntent().getSerializableExtra("nolat");
+        nodelongitude = (ArrayList<Double>) getIntent().getSerializableExtra("nolong");
+        nodeid = (ArrayList<Integer>) getIntent().getSerializableExtra("noid");
     }
 
 
