@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,9 +18,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +34,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -41,23 +47,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
-    double lat,longs;
-    LatLng current;
-    int complete;
+    double lat,longit,latklik,longklik,lattemp,longtemp,lat_close,long_close,lat_start,long_start;
+    LatLng current,dest;
+    int complete,minakhir,min,mapclickflag=0;
     LinearLayout topbar;
     RelativeLayout appbar;
-    RelativeLayout middle_bar;
     ImageButton pick;
+    Marker mark;
+    BitmapDescriptor markers;
+    TextView cek;
     final LatLng GOJEK = new LatLng(-6.27314, 106.81657);
     ArrayList<Double> nodelatitude;
     ArrayList<Double> nodelongitude;
     ArrayList<Integer> nodeid;
     ArrayList<String> nodename;
+    MarkerOptions markerOptions;
     private void inisialisasi() {
 
         appbar = (RelativeLayout) findViewById(R.id.app_bar);
         topbar = (LinearLayout) findViewById(R.id.middle_bar);
         pick = (ImageButton) findViewById(R.id.pick);
+        markers = BitmapDescriptorFactory.fromResource(R.drawable.marker);
+        cek = (TextView) findViewById(R.id.cek);
 
 
     }
@@ -100,20 +111,122 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraUpdate cameraPosition = CameraUpdateFactory.newLatLngZoom(GOJEK, 13);
         mMap.moveCamera(cameraPosition);
         mMap.animateCamera(cameraPosition);
+//        Spinner mySpinner = (Spinner) findViewById(R.id.spinner);
+//
+//        // Spinner adapter
+//        mySpinner
+//                .setAdapter(new ArrayAdapter<Double>(MapsActivity.this,
+//                        android.R.layout.simple_spinner_dropdown_item,
+//                        nodelatitude));
+//
+//        // Spinner on item click listener
+//
 
     }
+    private void markeroption(LatLng koor, BitmapDescriptor marker,String nama){
+        markerOptions= new MarkerOptions().position(koor)
+                .title(nama)
+                .snippet("Pilih")
+                .icon(marker);
+    }
+    public static double haversine(double lat1, double lng1, double lat2, double lng2) {
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double dist = (double) (earthRadius * c);
+        return dist;
+    }
+    public int findMinIdx(int[] numbers) {
+        if (numbers == null || numbers.length == 0)
+            return -1;
+        int minVal = numbers[0];
+        int minIdx = 0;
+        for(int idx=1; idx<numbers.length; idx++) {
+            if(numbers[idx] < minVal) {
+                minVal = numbers[idx];
+                minIdx = idx;
+            }
+        }
+        return minIdx;
+    }
+    public int coor_closer(double lats,double longs){
+        int[] dists = new int[nodelatitude.size()];
+        int min;
+        for (int i = 0; i < nodelatitude.size(); i++) {
+            lat = nodelatitude.get(i);
+            longit = nodelongitude.get(i);
+            dists[i] = (int) haversine(lats, longs, lat, longit);
+        }
+        min = findMinIdx(dists);
+        return min;
+    }
+    protected void Mapclick( final BitmapDescriptor markers) {
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                if(nodelatitude != null){
+                    latklik = point.latitude;
+                    longklik = point.longitude;
+                    minakhir = coor_closer(latklik,longklik);
+                    lat_start = nodelatitude.get(minakhir);
+                    long_start = nodelongitude.get(minakhir);
+                    if(lat_start!=0) {
+                        if (complete == 1) {
+                            dest = new LatLng(lat_start,long_start);
+                            markeroption(dest, markers, nodename.get(minakhir));
+                        }
+                        if (complete != 2) {
+                            if (mapclickflag == 0) {
+                                if (mark != null) {
+                                    mark.remove();
+                                    mark = mMap.addMarker(markerOptions);
+                                    mapclickflag++;
+                                } else {
+                                    mark = mMap.addMarker(markerOptions);
+                                    mapclickflag++;
+                                }
+                            } else {
+                                mark.remove();
+                                mark = mMap.addMarker(markerOptions);
+                                mapclickflag++;
+                            }
+                        } else {
+                        }
+                    }
+                    else {
+                        Toast.makeText(MapsActivity.this, "Tidak Dapat Sambung ke Database", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }
+                else {
+                    Toast.makeText(MapsActivity.this, "Gangguan Koneksi", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+    }
     public void pick_button(View view){
         topbar.setVisibility(View.GONE);
         pick.setVisibility(View.GONE);
         Toast.makeText(this,"Sentuh Peta",Toast.LENGTH_SHORT).show();
+        Mapclick(markers);
+        complete++;
+
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        lat=location.getLatitude();
-        longs=location.getLongitude();
-        current =new LatLng(lat,longs);
+        current = new LatLng(location.getLatitude(), location.getLongitude());
+        lat_start = location.getLatitude();
+        long_start = location.getLongitude();
+       // noawal = nodeid.get(coor_closer(lat_start, long_start));
     }
 
     @Override

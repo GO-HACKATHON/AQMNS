@@ -71,7 +71,7 @@ public class SplashScreen extends AppCompatActivity {
 
             try {
                 // Locate the NodeList name
-                jsonarray = jsonobject.getJSONArray("worldpopulation");
+                jsonarray = jsonobject.getJSONArray("node");
                 for (int i = 0; i < jsonarray.length(); i++) {
                     jsonobject = jsonarray.getJSONObject(i);
                     nodelatitude.add(jsonobject.getDouble("latitude"));
